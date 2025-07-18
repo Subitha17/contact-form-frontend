@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 function Contact() {
   const [name, setName] = useState('');
@@ -7,7 +8,7 @@ function Contact() {
   const [address, setAddress] = useState('');
   const [submittedData, setSubmittedData] = useState(null);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name.trim() || !contact.trim() || !email.trim() || !address.trim()) {
       alert('Please fill in all the fields.');
       return;
@@ -18,15 +19,19 @@ function Contact() {
       return;
     }
 
-    alert(
-      `Contact Form Submitted:\n\n` +
-      `Name: ${name}\n` +
-      `Contact: ${contact}\n` +
-      `Email: ${email}\n` +
-      `Address: ${address}`
-    );
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/contacts`,
+        { name, contact, email, address }
+      );
 
-    setSubmittedData({ name, contact, email, address });
+      alert('Contact form submitted successfully!');
+      setSubmittedData(response.data);
+      handleReset();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Failed to submit contact form. Please try again.');
+    }
   };
 
   const handleReset = () => {
@@ -39,7 +44,6 @@ function Contact() {
 
   const isFilled = [name, contact, email, address].some((val) => val.trim() !== '');
 
-  // Stylish CSS-in-JS
   const styles = {
     container: {
       maxWidth: '520px',

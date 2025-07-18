@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './App.css';
 
 function ContactForm() {
@@ -23,18 +24,16 @@ function ContactForm() {
     setStatus('Sending...');
 
     try {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/contacts`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(formData)
-  });
-  const data = await response.json();
-  // handle success here
-} catch (error) {
-  console.error("Error submitting form:", error);
-}
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/contacts`,
+        formData
+      );
+      console.log('Success:', response.data);
+      setStatus('Submitted successfully!');
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setStatus('Submission failed.');
+    }
   };
 
   return (
